@@ -1,0 +1,4 @@
+cmake --build build/ --target clean
+rm -rf build/*
+cmake -GNinja -S . -B build/ -DCMAKE_BUILD_TYPE=Debug
+cd build && time ninja && cd ..
