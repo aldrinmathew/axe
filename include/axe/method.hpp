@@ -1,8 +1,8 @@
-#ifndef AXE_REQUEST_METHODS_HPP
-#define AXE_REQUEST_METHODS_HPP
+#ifndef AXE_METHOD_HPP
+#define AXE_METHOD_HPP
 
 namespace axe {
-enum class RequestMethod {
+enum class Method {
   // The GET method requests a representation of the specified resource.
   // Requests using GET should only retrieve data.
   Get,
@@ -27,7 +27,9 @@ enum class RequestMethod {
   // target resource.
   Trace,
   // The PATCH method applies partial modifications to a resource.
-  Patch
+  Patch,
+  // Invalid request method
+  None
 };
 }
 
