@@ -1,6 +1,7 @@
 #include "axe/server.hpp"
 #include "./log.hpp"
 #include "axe/listen.hpp"
+#include "axe/request.hpp"
 #include "axe/socket_address.hpp"
 #include "unistd.h"
 #include <arpa/inet.h>
@@ -8,8 +9,11 @@
 #include <cstdlib>
 #include <netinet/in.h>
 #include <signal.h>
+#include <string>
 
 namespace axe {
+
+#define BUFFERLEN 300
 
 bool Server::isExitHandlerSet = false;
 
@@ -36,7 +40,7 @@ Server::Server() : fd(socket(AF_INET, SOCK_STREAM, 0)) {
   }
 }
 
-void Server::listen(const char *addr, const int port, bool isIPv6) {
+void Server::listen(const int port, const char *addr, bool isIPv6) {
   if (fd != 0) {
     if (isIPv6) {
       DLOG("Is IPv6")
@@ -80,15 +84,31 @@ void Server::listen(const char *addr, const int port, bool isIPv6) {
           DLOG("Listening successful")
           while (true) {
             if ((newFD = accept(fd, acceptAddr, acceptAddrLen)) >= 0) {
-              char *buffer = (char *)malloc(sizeof(char) * 1000);
+              std::string message;
+              char buffer[BUFFERLEN];
               DLOG("Buffer allocated")
-              read(newFD, buffer, 1000);
-              DLOG("Message received: ")
-              std::cout << buffer << "\n";
+              auto readRes = 1;
+              while ((readRes != 0) && (readRes != -1)) {
+                DLOG("Reading...")
+                readRes = read(newFD, buffer, BUFFERLEN);
+                DLOG("Read result is " << readRes)
+                if (readRes != -1) {
+                  message += buffer;
+                  std::fill(std::begin(buffer), std::end(buffer), '\0');
+                  if (readRes == 0) {
+                    break;
+                  } else if (readRes == BUFFERLEN) {
+                    continue;
+                  } else {
+                    break;
+                  }
+                } else {
+                  break;
+                }
+              }
+              auto req = Request(fd, message);
               close(newFD);
-              DLOG("Server file descriptor closed succesfully")
-              free(buffer);
-              DLOG("Buffer freed")
+              DLOG("Communication file descriptor closed succesfully")
             } else {
               perror("Accepting connection failed");
               exit(EXIT_FAILURE);

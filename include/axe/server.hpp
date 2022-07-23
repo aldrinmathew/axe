@@ -20,7 +20,8 @@ private:
 public:
   Server();
 
-  void listen(const char *addr, const int port, const bool isIPv6 = false);
+  void listen(const int port, const char *addr = "localhost",
+              const bool isIPv6 = false);
 
   static void exitHandler(int);
 };
