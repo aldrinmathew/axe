@@ -3,6 +3,11 @@
 
 #include <iostream>
 
+#define ERROR(val)                                                             \
+  std::cout << "\e[41m"                                                        \
+            << " ERROR "                                                       \
+            << "\e[0;31m " << val << "\e[0m\n";
+
 #define LOG(val)                                                               \
   std::cout << "\e[43m"                                                        \
             << " AXE "                                                         \
