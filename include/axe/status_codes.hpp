@@ -1,7 +1,10 @@
 #ifndef AXE_STATUS_CODES_HPP
 #define AXE_STATUS_CODES_HPP
 
+#include <string>
+
 namespace axe {
+
 enum class StatusCode {
   /**
    * @brief Informational Codes
@@ -310,7 +313,7 @@ enum class StatusCode {
   // instead of 208 Already Reported).
   loopDetected,
   // Further extensions to the request are required for the server to fulfil it.
-  notExtended,
+  notExtended = 510,
   // The client needs to authenticate to gain network access. Intended for use
   // by intercepting proxies used to control access to the network (e.g.,
   // "captive portals" used to require agreement to Terms of Service before
@@ -446,6 +449,9 @@ enum class StatusCode {
   // returned an error code when authenticating the user.
   _unauthorizedByIdentityProvider = 561,
 };
-}
+
+std::string statusToReasonPhrase(StatusCode c);
+
+} // namespace axe
 
 #endif
